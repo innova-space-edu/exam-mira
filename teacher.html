@@ -6,66 +6,249 @@
   <title>Docentes — Innova Space Education 2025</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    .container { max-width: 1100px; margin: 24px auto; padding: 0 16px;}
-    .card { background: #121a26; border-radius: 18px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
-    .row { display: grid; gap: 16px; grid-template-columns: 1fr; }
-    @media (min-width: 900px){ .row { grid-template-columns: 1fr 1fr; } }
-    .btn { background:#00d1d1; color:#0a0f18; border:none; border-radius: 999px; padding:10px 16px; cursor:pointer; }
+    /* ---------- Layout base ---------- */
+    :root {
+      --bg-deep:#07111d;
+      --panel:#0e1622;
+      --panel-2:#121a26;
+      --line:#1f2a3a;
+      --accent:#00d1d1;
+      --accent-2:#7bf7ff;
+      --text:#e5f2ff;
+      --muted:#9db3cd;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    html,body { height:100%; }
+    body {
+      background: #000; color: var(--text); overflow-x: hidden;
+      font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    /* canvas del espacio */
+    #bg-space {
+      position: fixed; inset: 0; z-index: -1;
+      background: radial-gradient(1200px 800px at 10% 10%, #0b1a2a 0%, transparent 60%),
+                  radial-gradient(1400px 1000px at 90% 20%, #1a0f2e 0%, transparent 60%),
+                  radial-gradient(1600px 1200px at 40% 90%, #001b26 0%, transparent 60%);
+      filter: saturate(1.2);
+    }
+
+    .wrap {
+      max-width: 1280px; margin: 24px auto; padding: 0 16px;
+      display:grid; grid-template-columns: 420px 1fr; gap: 18px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(18,26,38,.9), rgba(10,15,24,.9));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+
+    header {
+      max-width:1280px; margin: 18px auto 8px; padding: 0 16px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    h1 { color: var(--accent); letter-spacing: .5px; margin:0; }
+
+    .btn {
+      background: var(--accent); color:#08131a; border:none; border-radius:999px;
+      padding:10px 16px; cursor:pointer; font-weight:600;
+      transition: transform .12s ease, box-shadow .2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,209,209,.35); }
     .btn.secondary { background:#263544; color:#c9d7e8; }
-    .hidden { display:none; }
-    .chatBox { height: 360px; overflow:auto; padding: 12px; background:#0e1622; border-radius:12px; }
+    .btn.warn { background:#ff7b7b; color:#1a0b0b; }
+
+    label { color: var(--muted); font-size: 14px; }
+    input, textarea, select {
+      width:100%; background:#0f1722; color:var(--text);
+      border:1px solid var(--line); border-radius:12px; padding:10px;
+    }
+    .field { display:flex; gap:10px; margin-top:8px; }
+    .stack { display:flex; flex-direction:column; gap:10px; }
+
+    /* ---------- Sidebar (constructor) ---------- */
+    .sidebar { padding:16px; }
+    .hint { color:var(--muted); font-size:13px; }
+
+    .items-list { display:flex; flex-direction:column; gap:10px; margin-top:10px; }
+    .item {
+      border:1px dashed #264157; border-radius:12px; padding:10px; background:#0a1220;
+    }
+    .item .row { display:grid; grid-template-columns: 1fr 120px; gap:8px; }
+    .item small { color: var(--muted); }
+
+    .row-2 { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .pill { padding:6px 10px; border-radius:999px; background:#112031; color:#bfeaff; font-size:12px; display:inline-block; }
+
+    /* ---------- Chat ---------- */
+    .chat { padding:16px; display:flex; flex-direction:column; gap:12px; }
+    .chat-head { display:flex; align-items:center; justify-content:space-between; }
+    .bot-id { display:flex; align-items:center; gap:10px; }
+    .bot-icon {
+      width:38px; height:38px; border-radius:50%;
+      background: radial-gradient(circle at 35% 35%, #00f2ff, #0077ff 60%, #003356);
+      box-shadow: 0 0 18px rgba(0,180,255,.55), inset 0 0 22px rgba(0,255,255,.35);
+      position:relative;
+    }
+    .bot-icon::after {
+      content:""; position:absolute; inset:6px;
+      border-radius:50%; background: radial-gradient(circle at 60% 40%, #cfffff 0%, rgba(255,255,255,.25) 25%, transparent 45%);
+      filter: blur(.2px);
+    }
+
+    .chatBox {
+      height: 480px; overflow:auto; padding: 12px; background:#09121d;
+      border:1px solid var(--line); border-radius:12px;
+    }
     .line { margin:8px 0; white-space: pre-wrap; }
     .me { color:#9ce0ff; }
     .bot { color:#b6f7e2; }
-    .field { display:flex; gap:8px; }
-    input, textarea { width:100%; background:#0f1722; color:#e5f2ff; border:1px solid #1f2a3a; border-radius:10px; padding:10px; }
-    label { color:#9db3cd; font-size:14px; }
-    header a { color:#9db3cd; text-decoration:none; }
+    .typing { color:#86a9c8; font-style: italic; }
+
+    .send-row { display:grid; grid-template-columns: 1fr 110px; gap:8px; }
+    .badge { background:#12293f; border:1px solid #21486c; padding:6px 10px; border-radius:999px; color:#bfeaff; font-size:12px; }
+
+    @media (max-width: 1020px){
+      .wrap { grid-template-columns: 1fr; }
+      .chatBox { height: 380px; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <h1 style="color:#00d1d1;">Panel de Docentes</h1>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <a href="/" class="btn secondary">Volver al examen</a>
-        <button id="logoutBtn" class="btn secondary">Cerrar sesión</button>
+  <!-- Fondo animado espacio -->
+  <canvas id="bg-space"></canvas>
+
+  <header>
+    <h1>Panel de Docentes</h1>
+    <div style="display:flex; gap:8px;">
+      <a href="/" class="btn secondary">Volver al examen</a>
+      <button id="logoutBtn" class="btn secondary">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <!-- Sidebar constructor -->
+    <section class="card sidebar">
+      <h2 style="margin:0 0 8px;">Crear/editar examen</h2>
+
+      <div class="stack">
+        <div class="field" style="flex-direction:column;">
+          <label>Título</label>
+          <input id="title" placeholder="Prueba de ejemplo" />
+        </div>
+
+        <div class="field" style="flex-direction:column;">
+          <label>Indicaciones de la primera lámina (desarrollo con dibujo)</label>
+          <textarea id="prompt" rows="3" placeholder="Describe los pasos para resolver..."></textarea>
+        </div>
+
+        <div class="row-2">
+          <button id="btnAddOpen" class="btn" title="Ítem de desarrollo con dibujo">+ Desarrollo (dibujo)</button>
+          <button id="btnAddNumeric" class="btn" title="Ítem numérico">+ Ítem numérico</button>
+        </div>
+        <div>
+          <button id="btnAddMC" class="btn" title="Ítem de alternativas">+ Múltiple opción</button>
+        </div>
+
+        <div class="items-list" id="itemsList"></div>
+
+        <div class="row-2">
+          <button id="btnSave" class="btn">Guardar examen</button>
+          <button id="btnClear" class="btn secondary">Limpiar</button>
+        </div>
+
+        <div class="row-2">
+          <button id="btnDownload" class="btn">Descargar JSON</button>
+          <label for="fileUpload" class="btn secondary" style="text-align:center; cursor:pointer;">Cargar JSON</label>
+          <input id="fileUpload" type="file" accept="application/json" style="display:none;" />
+        </div>
+
+        <p class="hint">Se guarda en el navegador del profe (<span class="pill">localStorage</span>). También puedes descargarlo/cargarlo como archivo JSON.</p>
       </div>
-    </header>
+    </section>
 
-    <!-- Panel del docente (protegido por login) -->
-    <main id="app">
-      <div class="row">
-        <!-- Constructor de examen -->
-        <section class="card">
-          <h2 style="color:#bce5ff;">Crear/editar examen</h2>
-          <form id="examForm">
-            <div class="field">
-              <label>Título</label>
-              <input id="title" placeholder="Prueba de ejemplo" />
-            </div>
-            <div class="field">
-              <label>Indicaciones de la primera lámina (desarrollo con dibujo)</label>
-              <textarea id="prompt" rows="4" placeholder="Describe los pasos para resolver..."></textarea>
-            </div>
-            <button class="btn" type="submit">Guardar examen</button>
-          </form>
-          <p style="margin-top:8px;color:#9db3cd">Se guarda localmente en el navegador del profe (localStorage).</p>
-        </section>
-
-        <!-- Chat docente -->
-        <section class="card">
-          <h2 style="color:#bce5ff;">Chat docente (IA)</h2>
-          <div id="chat" class="chatBox"></div>
-          <div class="field" style="margin-top:10px;">
-            <input id="message" placeholder="Pregunta algo sobre la prueba..." />
-            <button id="send" class="btn">Enviar</button>
+    <!-- Chat -->
+    <section class="card chat">
+      <div class="chat-head">
+        <div class="bot-id">
+          <div class="bot-icon"></div>
+          <div>
+            <h2 style="margin:0;">Chat docente (IA)</h2>
+            <span class="badge">Innova Space Education 2025</span>
           </div>
-        </section>
+        </div>
       </div>
-    </main>
+
+      <div id="chat" class="chatBox"></div>
+
+      <div class="send-row">
+        <input id="message" placeholder="Pregunta algo sobre la prueba..." />
+        <button id="send" class="btn">Enviar</button>
+      </div>
+    </section>
   </div>
 
   <script src="teacher.js"></script>
+
+  <!-- Animación de espacio profundo -->
+  <script>
+    (function starfield(){
+      const c = document.getElementById('bg-space');
+      const ctx = c.getContext('2d');
+      let w, h, stars = [], twinkle = 0;
+
+      function resize(){
+        w = c.width = window.innerWidth;
+        h = c.height = window.innerHeight;
+        const count = Math.min(600, Math.floor(w*h/2500));
+        stars = new Array(count).fill(0).map(()=>({
+          x: Math.random()*w,
+          y: Math.random()*h,
+          z: Math.random()*0.8 + 0.2,
+          r: Math.random()*1.4 + .2,
+          s: Math.random()*0.6 + 0.2
+        }));
+      }
+      window.addEventListener('resize', resize); resize();
+
+      function galaxy(x,y,r,gradStops){
+        const g = ctx.createRadialGradient(x,y,0,x,y,r);
+        gradStops.forEach(([p,color])=>g.addColorStop(p,color));
+        ctx.globalCompositeOperation='lighter';
+        ctx.fillStyle=g;
+        ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+        ctx.globalCompositeOperation='source-over';
+      }
+
+      function tick(){
+        ctx.clearRect(0,0,w,h);
+
+        // nebulosas sutiles
+        galaxy(w*0.2,h*0.25,300,[[0,'rgba(0,220,255,.25)'],[1,'rgba(0,0,0,0)']]);
+        galaxy(w*0.8,h*0.2,380,[[0,'rgba(130,0,255,.2)'],[1,'rgba(0,0,0,0)']]);
+        galaxy(w*0.5,h*0.85,420,[[0,'rgba(0,180,160,.18)'],[1,'rgba(0,0,0,0)']]);
+
+        twinkle += 0.02;
+
+        for(const s of stars){
+          s.x += s.s*s.z; // leve desplazamiento
+          if (s.x > w+10) s.x = -10;
+
+          const flicker = (Math.sin(twinkle + s.x*0.01 + s.y*0.01)+1)/2;
+          const alpha = 0.3 + flicker*0.7*s.z;
+
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(${150+Math.floor(100*s.z)}, ${200+Math.floor(40*s.z)}, ${255}, ${alpha})`;
+          ctx.arc(s.x, s.y, s.r*s.z*(0.7+flicker*0.6), 0, Math.PI*2);
+          ctx.fill();
+        }
+        requestAnimationFrame(tick);
+      }
+      tick();
+    })();
+  </script>
 </body>
 </html>
