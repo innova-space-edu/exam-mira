@@ -1,14 +1,54 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // Backend (Netlify Functions)
   const BACKEND = "https://exammira.netlify.app/.netlify/functions";
 
-  // Elementos UI
+  // =========================
+  //  Autenticación (GoTrue)
+  // =========================
+  // Cargamos GoTrue (cliente de Netlify Identity) sin tocar el HTML.
+  await loadScript("https://cdn.jsdelivr.net/npm/gotrue-js@1/dist/gotrue.min.js");
+
+  const auth = new window.GoTrue({
+    APIUrl: `${window.location.origin}/.netlify/identity`,
+    audience: "",
+    setCookie: true
+  });
+
+  // Si no hay usuario logueado, redirige a login
+  try {
+    const user = auth.currentUser();
+    if (!user) {
+      window.location.href = "/login.html";
+      return;
+    }
+  } catch (_) {
+    // Si falla el chequeo, por seguridad redirigimos a login
+    window.location.href = "/login.html";
+    return;
+  }
+
+  // =========================
+  //  Elementos UI existentes
+  // =========================
   const examForm = document.getElementById('examForm');
   const chatOutput = document.getElementById('chat') || document.getElementById('chatOutput');
   const msgInput = document.getElementById('message');
   const sendBtn = document.getElementById('send');
+  const logoutBtn = document.getElementById('logoutBtn');
 
-  // ---- Crear / guardar examen (simple, localStorage) ----
+  // =========================
+  //  Cerrar sesión
+  // =========================
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try { await auth.logout(); } catch (e) { /* ignore */ }
+      window.location.href = "/login.html";
+    });
+  }
+
+  // ======================================
+  //  Crear / guardar examen (localStorage)
+  // ======================================
   if (examForm) {
     examForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -37,7 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ---- Chat docente (IA) ----
+  // =========================
+  //  Chat docente (IA)
+  // =========================
   function appendLine(text, klass = "") {
     if (!chatOutput) return;
     const div = document.createElement('div');
@@ -78,7 +120,16 @@ Responde con precisión, conciso y con pasos concretos; conoce buenas prácticas
     });
   }
 
-  // ---- Si estás usando teacher.html con botones de login/logout vía Identity widget,
-  // puedes acoplar aquí el gating (opcional). Este archivo no fuerza Identity,
-  // así que la página abre sin login por ahora. ----
+  // =========================
+  //  Util: cargar script
+  // =========================
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error("No se pudo cargar " + src));
+      document.head.appendChild(s);
+    });
+  }
 });
