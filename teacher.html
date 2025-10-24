@@ -1,71 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Crear prueba - Innova Space Education 2025</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="exam-form-container">
-      <h2>Crear prueba</h2>
-      <form id="examForm">
-        <input
-          type="text"
-          id="title"
-          placeholder="Título de la prueba"
-          required
-        />
-        <input
-          type="text"
-          id="student"
-          placeholder="Nombre del estudiante"
-          required
-        />
-        <input
-          type="text"
-          id="course"
-          placeholder="Curso"
-          required
-        />
-        <!-- Date is optional to allow manual entry when running locally. -->
-        <input type="date" id="date" />
-        <input
-          type="text"
-          id="objective"
-          placeholder="Objetivo de la prueba"
-          required
-        />
-        <div id="questionsContainer">
-          <!-- Questions will be appended here dynamically -->
-        </div>
-        <button type="button" id="addQuestion">Agregar ejercicio</button>
-        <button type="submit">Guardar examen</button>
-      </form>
-    </div>
-    <div class="chat-container">
-      <h2>Chat de apoyo</h2>
-      <div id="chatMessages" class="chat-messages"></div>
-      <form id="chatForm">
-        <input
-          type="text"
-          id="chatInput"
-          placeholder="Escribe tu pregunta..."
-          autocomplete="off"
-          required
-        />
-        <button type="submit">Enviar</button>
-      </form>
-    </div>
-    <footer>
-      <p>Innova Space Education 2025</p>
-    </footer>
-    <!-- Teacher page logic -->
-    <script src="teacher.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Docentes — Innova Space Education 2025</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Widget de Netlify Identity -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <style>
+    .container { max-width: 1100px; margin: 24px auto; padding: 0 16px;}
+    .card { background: #121a26; border-radius: 18px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+    .row { display: grid; gap: 16px; grid-template-columns: 1fr; }
+    @media (min-width: 900px){ .row { grid-template-columns: 1fr 1fr; } }
+    .btn { background:#00d1d1; color:#0a0f18; border:none; border-radius: 999px; padding:10px 16px; cursor:pointer; }
+    .btn.secondary { background:#263544; color:#c9d7e8; }
+    .hidden { display:none; }
+    .chatBox { height: 360px; overflow:auto; padding: 12px; background:#0e1622; border-radius:12px; }
+    .line { margin:8px 0; }
+    .me { color:#9ce0ff; }
+    .bot { color:#b6f7e2; white-space: pre-wrap; }
+    .field { display:flex; gap:8px; }
+    input, textarea { width:100%; background:#0f1722; color:#e5f2ff; border:1px solid #1f2a3a; border-radius:10px; padding:10px; }
+    label { color:#9db3cd; font-size:14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h1 style="color:#00d1d1;">Panel de Docentes</h1>
+      <div>
+        <button id="loginBtn" class="btn">Iniciar sesión</button>
+        <button id="logoutBtn" class="btn secondary hidden">Cerrar sesión</button>
+      </div>
+    </header>
+
+    <!-- Bloque de acceso -->
+    <section id="gate" class="card">
+      <p>Para acceder al panel, por favor <strong>inicia sesión con tu correo</strong>.</p>
+      <p>Si no tienes invitación, pídele al admin que te envíe una invitación desde Netlify Identity.</p>
+      <button id="openWidget" class="btn">Entrar con correo</button>
+    </section>
+
+    <!-- Panel del docente -->
+    <main id="app" class="hidden">
+      <div class="row">
+        <!-- Constructor sencillo de examen -->
+        <section class="card">
+          <h2 style="color:#bce5ff;">Crear/editar examen</h2>
+          <form id="examForm">
+            <div class="field">
+              <label>Título</label>
+              <input id="title" placeholder="Prueba de ejemplo" />
+            </div>
+            <div class="field">
+              <label>Indicaciones de la primera lámina (desarrollo con dibujo)</label>
+              <textarea id="prompt" rows="4" placeholder="Describe los pasos para resolver..."></textarea>
+            </div>
+            <button class="btn" type="submit">Guardar examen</button>
+          </form>
+          <p style="margin-top:8px;color:#9db3cd">Se guarda localmente en el navegador del profe (localStorage).</p>
+        </section>
+
+        <!-- Chat docente -->
+        <section class="card">
+          <h2 style="color:#bce5ff;">Chat docente (IA)</h2>
+          <div id="chat" class="chatBox"></div>
+          <div class="field" style="margin-top:10px;">
+            <input id="message" placeholder="Pregunta algo sobre la prueba..." />
+            <button id="send" class="btn">Enviar</button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="teacher.js"></script>
+</body>
 </html>
