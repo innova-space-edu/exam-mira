@@ -21,6 +21,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.location.href = "/login.html";
       return;
     }
+    // NUEVO: validar dominio permitido
+    const email = (user.email || "").toLowerCase();
+    if (!email.endsWith("@colprovidencia.cl")) {
+      alert("Tu cuenta no tiene permisos de docente (dominio no permitido).");
+      try { await auth.logout(); } catch (_) {}
+      window.location.href = "/login.html";
+      return;
+    }
   } catch (_) {
     // Si falla el chequeo, por seguridad redirigimos a login
     window.location.href = "/login.html";
