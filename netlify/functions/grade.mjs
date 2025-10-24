@@ -37,15 +37,20 @@ export async function handler(event) {
       const slide = (submission.slides || []).find((s) => s.itemId === item.id);
 
       let extracted = "";
+      let caption = "";
 
-      // (Opcional) OCR.space si defines OCR_SPACE_KEY en Netlify
-      if (process.env.OCR_SPACE_KEY && slide?.canvasPNG) {
+      // === (Opcional) OCR.space si defines OCRSPACE_API_KEY / OCR_SPACE_KEY en Netlify ===
+      // Acepta cualquiera de los dos nombres de variable.
+      const OCR_KEY =
+        process.env.OCRSPACE_API_KEY || process.env.OCR_SPACE_KEY || "";
+
+      if (OCR_KEY && slide?.canvasPNG) {
         try {
           const base64 = (slide.canvasPNG.split(",")[1]) || "";
           const r = await fetch("https://api.ocr.space/parse/image", {
             method: "POST",
             headers: {
-              "apikey": process.env.OCR_SPACE_KEY,
+              "apikey": OCR_KEY,
               "Content-Type": "application/x-www-form-urlencoded"
             },
             body: new URLSearchParams({
@@ -59,6 +64,20 @@ export async function handler(event) {
           extracted = data?.ParsedResults?.[0]?.ParsedText || "";
         } catch (e) {
           // continúa sin OCR
+        }
+      }
+
+      // === (Opcional) Hugging Face captioning si defines HUGGINGFACE_API_TOKEN ===
+      // Usa por defecto: Salesforce/blip-image-captioning-large
+      if (process.env.HUGGINGFACE_API_TOKEN && slide?.canvasPNG) {
+        try {
+          caption = await hfCaptionFromDataURL(
+            slide.canvasPNG,
+            process.env.HUGGINGFACE_API_TOKEN,
+            process.env.HF_IMAGE_TO_TEXT_MODEL || "Salesforce/blip-image-captioning-large"
+          );
+        } catch (e) {
+          // continúa sin caption
         }
       }
 
@@ -76,6 +95,9 @@ Pesos: ${(item.rubric?.weights || []).join(", ") || "uniforme"}
 
 [RESPUESTA - TEXTO OCR]
 ${extracted || "(sin texto)"}
+
+[RESPUESTA - CAPTION (HuggingFace)]
+${caption || "(sin caption)"}
 
 [RESPUESTA - JSON FABRIC abreviado]
 ${slide?.canvasJSON ? JSON.stringify(slide.canvasJSON).slice(0, 3000) : "(sin json)"}
@@ -149,4 +171,44 @@ function cors() {
 }
 function json(code, obj) {
   return { statusCode: code, headers: cors(), body: JSON.stringify(obj) };
+}
+
+/**
+ * Genera una caption con Hugging Face Inference API a partir de un dataURL.
+ * Envia la imagen como binario (content-type image/png|jpeg), que es lo más compatible.
+ * Devuelve string vacío si algo falla.
+ */
+async function hfCaptionFromDataURL(dataURL, token, model = "Salesforce/blip-image-captioning-large") {
+  try {
+    // dataURL: "data:image/png;base64,AAAA..."
+    const [meta, b64] = (dataURL || "").split(",");
+    if (!b64) return "";
+    const contentType = (meta.match(/^data:(.*?);base64$/) || [])[1] || "image/png";
+    const bytes = Buffer.from(b64, "base64");
+
+    const url = `https://api-inference.huggingface.co/models/${encodeURIComponent(model)}`;
+    const r = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": contentType,
+        "Accept": "application/json"
+      },
+      body: bytes
+    });
+
+    // Respuesta típica: [{ generated_text: "caption..." }]
+    const out = await r.json();
+    if (Array.isArray(out)) {
+      const cand = out[0]?.generated_text || out[0]?.summary_text || "";
+      return typeof cand === "string" ? cand : "";
+    }
+    // Algunos modelos devuelven { generated_text: "..."}
+    if (out && typeof out === "object" && out.generated_text) {
+      return String(out.generated_text);
+    }
+    return "";
+  } catch {
+    return "";
+  }
 }
