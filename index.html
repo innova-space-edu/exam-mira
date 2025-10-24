@@ -25,9 +25,16 @@
         <span id="courseName"></span>
         <span id="examDate"></span>
       </div>
+
+      <!-- Botón para abrir el panel de docentes -->
+      <div style="position:absolute; right:16px; top:10px;">
+        <a href="/teacher.html" class="navButton">Docentes</a>
+      </div>
     </div>
+
     <!-- Question text display -->
     <div id="questionText" class="question-text"></div>
+
     <!-- Canvas and toolbar -->
     <div class="canvas-container">
       <div class="toolbox">
@@ -42,16 +49,19 @@
       </div>
       <canvas id="drawingCanvas"></canvas>
     </div>
+
     <!-- Controls for navigating between exercises -->
     <div class="controls">
       <button id="prevSlide" class="navButton">Anterior</button>
       <span id="slideIndicator"></span>
       <button id="nextSlide" class="navButton">Continuar</button>
     </div>
+
     <!-- Footer -->
     <footer>
       <p>Innova Space Education 2025</p>
     </footer>
+
     <!-- Student page logic -->
     <script src="student.js"></script>
   </body>
