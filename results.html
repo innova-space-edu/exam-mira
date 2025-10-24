@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resultados — Innova Space Education 2025</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body { max-width: 900px; margin: 20px auto; padding: 0 16px; }
+    .card { background:#0e1622; border:1px solid #1f2a3a; border-radius:14px; padding:16px; }
+    .row { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .score{ color:#7bf7ff; }
+    .pill{ padding:4px 10px; border-radius:999px; background:#12293f; color:#bfeaff; display:inline-block; }
+  </style>
+</head>
+<body>
+  <h1>Resultados</h1>
+  <div id="out" class="card"></div>
+  <script>
+    function decodePayload(hash) {
+      try { return JSON.parse(decodeURIComponent(escape(atob(hash)))); } catch { return null; }
+    }
+    const data = location.hash ? decodePayload(location.hash.slice(1)) : null
+      || (function(){ try { return JSON.parse(localStorage.getItem('lastResults')||'null'); } catch { return null; } })();
+
+    const out = document.getElementById('out');
+    if(!data){ out.textContent = "No hay resultados para mostrar."; }
+    else {
+      out.innerHTML = `
+        <p><strong>Estudiante:</strong> ${data.student?.name || '-'} — <strong>Curso:</strong> ${data.student?.course || '-'} — <strong>Fecha:</strong> ${data.student?.date || '-'}</p>
+        <p><strong>Nota (1–7):</strong> <span class="score">${data.grade}</span> — <span class="pill">${Math.round((data.total/data.maxTotal)*100)}%</span></p>
+        <h3>Detalle</h3>
+        <ul>${data.scores.map(s=>`<li>${s.itemId}: ${s.score}/${s.max} — ${s.feedback||''}</li>`).join('')}</ul>
+      `;
+    }
+  </script>
+</body>
+</html>
