@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // URL base de las funciones Netlify
-  const BACKEND = "https://TU-SITIO.netlify.app/.netlify/functions";
+  const BACKEND = "https://exammira.netlify.app/.netlify/functions";
 
   const canvas = new fabric.Canvas('canvas', { isDrawingMode: true });
   let slides = [];
