@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Examen - Innova Space Education 2025</title>
+    <!-- Import Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <!-- Import Fabric.js via CDN. A stable version (5.x) is used here because
+         Fabric 6 is still experimental and may cause issues when drawing.
+         See https://fabricjs.com/ for details. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
+  </head>
+  <body>
+    <!-- Navigation bar: displays exam title and metadata -->
+    <div class="navbar">
+      <h1 id="examTitle">Prueba</h1>
+      <div class="exam-info">
+        <span id="studentName"></span>
+        <span id="courseName"></span>
+        <span id="examDate"></span>
+      </div>
+    </div>
+    <!-- Question text display -->
+    <div id="questionText" class="question-text"></div>
+    <!-- Canvas and toolbar -->
+    <div class="canvas-container">
+      <div class="toolbox">
+        <button id="penTool" title="Dibujo a mano alzada">Lápiz</button>
+        <button id="rectTool" title="Dibujar un rectángulo">Rectángulo</button>
+        <button id="circleTool" title="Dibujar un círculo">Círculo</button>
+        <button id="lineTool" title="Dibujar una línea">Línea</button>
+        <button id="textTool" title="Agregar texto">Texto</button>
+        <button id="eraserTool" title="Eliminar objeto seleccionado">Borrar</button>
+        <input type="color" id="colorPicker" title="Color del trazo" value="#ffffff" />
+        <button id="clearCanvas" title="Limpiar el dibujo">Limpiar</button>
+      </div>
+      <canvas id="drawingCanvas"></canvas>
+    </div>
+    <!-- Controls for navigating between exercises -->
+    <div class="controls">
+      <button id="prevSlide" class="navButton">Anterior</button>
+      <span id="slideIndicator"></span>
+      <button id="nextSlide" class="navButton">Continuar</button>
+    </div>
+    <!-- Footer -->
+    <footer>
+      <p>Innova Space Education 2025</p>
+    </footer>
+    <!-- Student page logic -->
+    <script src="student.js"></script>
+  </body>
+</html>

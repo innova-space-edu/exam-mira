@@ -1,0 +1,348 @@
+/*
+ * Global styles for Innova Space Education 2025 exam platform.
+ *
+ * This stylesheet defines a futuristic dark theme with vibrant accent
+ * colors, rounded buttons and responsive layouts. Variables are used
+ * to centralize colors so that the look and feel can be tweaked
+ * easily. All pages share common styling for consistency.
+ */
+
+/* Variables for futuristic color scheme */
+:root {
+  --primary-color: #00bcd4; /* bright teal accent */
+  --secondary-color: #8e24aa; /* purple accent */
+  --accent-color: #ff4081; /* pink accent for errors */
+  --bg-color: #0d1b2a; /* deep blue-black background */
+  --surface-color: #1b263b; /* slightly lighter surface */
+  --text-color: #e0e0e0; /* light grey for text */
+  --button-radius: 12px; /* consistent border radius */
+}
+
+/* Reset defaults */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(135deg, var(--bg-color) 0%, var(--surface-color) 100%);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navigation bar displayed on the student page */
+.navbar {
+  padding: 1rem;
+  background: var(--surface-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar h1 {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+.navbar .exam-info span {
+  margin-left: 1rem;
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+}
+
+/* Container for the drawing canvas and toolbox */
+.canvas-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+/* Toolbar for drawing tools */
+.toolbox {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.toolbox button,
+.toolbox input[type="color"] {
+  background: var(--surface-color);
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--button-radius);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.toolbox button:hover,
+.toolbox input[type="color"]:hover {
+  background: var(--primary-color);
+}
+
+.toolbox input[type="color"] {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--primary-color);
+}
+
+/* Styling for the canvas element itself */
+#drawingCanvas {
+  border: 2px solid var(--primary-color);
+  background: var(--surface-color);
+  width: 100%;
+  height: 500px; /* JS will adjust based on viewport */
+  border-radius: var(--button-radius);
+}
+
+/* Controls for navigating between slides */
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.navButton {
+  background: var(--primary-color);
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--button-radius);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.navButton:hover {
+  background: var(--secondary-color);
+}
+
+#slideIndicator {
+  font-size: 1rem;
+  color: var(--secondary-color);
+}
+
+/* Footer shared across pages */
+footer {
+  text-align: center;
+  padding: 0.5rem;
+  background: var(--surface-color);
+  color: var(--secondary-color);
+  font-size: 0.9rem;
+}
+
+/* Question text display on the student page */
+.question-text {
+  background: var(--surface-color);
+  padding: 0.5rem 1rem;
+  border-left: 5px solid var(--primary-color);
+  margin-bottom: 0.5rem;
+  border-radius: var(--button-radius);
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+/* Login page styles */
+.login-page {
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
+  background: var(--surface-color);
+  padding: 2rem;
+  border-radius: var(--button-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  width: 320px;
+  margin: auto;
+  margin-top: 10vh;
+}
+
+.login-container h2 {
+  margin-bottom: 1rem;
+  text-align: center;
+  color: var(--primary-color);
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-container input {
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--button-radius);
+  border: none;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+.login-container button {
+  background: var(--primary-color);
+  border: none;
+  padding: 0.6rem;
+  border-radius: var(--button-radius);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-container button:hover {
+  background: var(--secondary-color);
+}
+
+.error {
+  color: var(--accent-color);
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* Exam creation (teacher page) */
+.exam-form-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: var(--surface-color);
+  padding: 1.5rem;
+  border-radius: var(--button-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.exam-form-container h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.exam-form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.exam-form-container input,
+.exam-form-container textarea {
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--button-radius);
+  border: none;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+.exam-form-container button {
+  width: fit-content;
+  padding: 0.6rem 1rem;
+  border-radius: var(--button-radius);
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.exam-form-container button:hover {
+  background: var(--secondary-color);
+}
+
+#questionsContainer textarea {
+  width: 100%;
+  min-height: 80px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border-radius: var(--button-radius);
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Chat box styles */
+.chat-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: var(--surface-color);
+  padding: 1.5rem;
+  border-radius: var(--button-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.chat-container h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.chat-messages {
+  height: 300px;
+  overflow-y: auto;
+  background: var(--bg-color);
+  padding: 1rem;
+  border-radius: var(--button-radius);
+  margin-bottom: 1rem;
+}
+
+.chat-message {
+  margin-bottom: 0.5rem;
+}
+
+.chat-message.user {
+  text-align: right;
+  color: var(--accent-color);
+}
+
+.chat-message.assistant {
+  text-align: left;
+  color: var(--primary-color);
+}
+
+#chatForm {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#chatInput {
+  flex: 1;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--button-radius);
+  border: none;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+#chatForm button {
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--button-radius);
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#chatForm button:hover {
+  background: var(--secondary-color);
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .exam-form-container,
+  .chat-container {
+    margin: 1rem;
+    width: calc(100% - 2rem);
+  }
+  .canvas-container #drawingCanvas {
+    height: 300px;
+  }
+}
