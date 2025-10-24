@@ -1,8 +1,7 @@
 [build]
-publish = "innova-space-education"
+publish = "."
 functions = "netlify/functions"
 command = ""
-
 
 [[headers]]
 for = "/.netlify/functions/*"
