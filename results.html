@@ -6,32 +6,85 @@
   <title>Resultados — Innova Space Education 2025</title>
   <link rel="stylesheet" href="style.css"/>
   <style>
-    body { max-width: 900px; margin: 20px auto; padding: 0 16px; }
-    .card { background:#0e1622; border:1px solid #1f2a3a; border-radius:14px; padding:16px; }
+    body { max-width: 980px; margin: 24px auto; padding: 0 16px; color:#e5f2ff; }
+    .card { background:#0e1622; border:1px solid #1f2a3a; border-radius:14px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,.35); }
     .row { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
-    .score{ color:#7bf7ff; }
+    .score{ color:#7bf7ff; font-weight:700; }
     .pill{ padding:4px 10px; border-radius:999px; background:#12293f; color:#bfeaff; display:inline-block; }
+    .table { width:100%; border-collapse: collapse; margin-top:10px;}
+    .table th, .table td { border-bottom:1px solid #1f2a3a; padding:10px 8px; text-align:left; }
+    .muted{ color:#9db3cd; }
+    .btn { background:#00d1d1; color:#08131a; border:none; border-radius:999px; padding:10px 14px; font-weight:600; cursor:pointer; }
+    .btn.secondary{ background:#263544; color:#c9d7e8; }
+    header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    a { color:#7bf7ff; }
   </style>
 </head>
 <body>
-  <h1>Resultados</h1>
-  <div id="out" class="card"></div>
+  <header>
+    <h1>Resultados</h1>
+    <div>
+      <a class="btn secondary" href="/">Volver a la prueba</a>
+    </div>
+  </header>
+
+  <div id="out" class="card">Cargando…</div>
+
   <script>
     function decodePayload(hash) {
       try { return JSON.parse(decodeURIComponent(escape(atob(hash)))); } catch { return null; }
     }
-    const data = location.hash ? decodePayload(location.hash.slice(1)) : null
-      || (function(){ try { return JSON.parse(localStorage.getItem('lastResults')||'null'); } catch { return null; } })();
+    function percent(n){ return Math.round(n*100); }
+
+    const fromHash = location.hash ? decodePayload(location.hash.slice(1)) : null;
+    const fromLocal = (()=>{ try { return JSON.parse(localStorage.getItem('lastResults')||'null'); } catch { return null; } })();
+    const data = fromHash || fromLocal;
 
     const out = document.getElementById('out');
-    if(!data){ out.textContent = "No hay resultados para mostrar."; }
-    else {
+    if(!data){
+      out.innerHTML = "<p>No hay resultados para mostrar.</p>";
+    } else {
+      const pct = (data.total || 0) / (data.maxTotal || 1);
+      const share = `${location.origin}${location.pathname}#${btoa(unescape(encodeURIComponent(JSON.stringify(data))))}`;
+
       out.innerHTML = `
-        <p><strong>Estudiante:</strong> ${data.student?.name || '-'} — <strong>Curso:</strong> ${data.student?.course || '-'} — <strong>Fecha:</strong> ${data.student?.date || '-'}</p>
-        <p><strong>Nota (1–7):</strong> <span class="score">${data.grade}</span> — <span class="pill">${Math.round((data.total/data.maxTotal)*100)}%</span></p>
-        <h3>Detalle</h3>
-        <ul>${data.scores.map(s=>`<li>${s.itemId}: ${s.score}/${s.max} — ${s.feedback||''}</li>`).join('')}</ul>
+        <p><strong>Estudiante:</strong> ${escapeHtml(data.student?.name || '-')}
+           — <strong>Curso:</strong> ${escapeHtml(data.student?.course || '-')}
+           — <strong>Fecha:</strong> ${escapeHtml(data.student?.date || '-')}</p>
+
+        <p><strong>Nota (1–7):</strong> <span class="score">${data.grade}</span>
+           — <span class="pill">${percent(pct)}%</span></p>
+
+        <div class="muted">Enlace compartible:</div>
+        <div style="display:flex; gap:8px; align-items:center; margin:6px 0 12px;">
+          <input id="shareLink" style="flex:1; padding:8px 10px; border-radius:10px; border:1px solid #1f2a3a; background:#0f1722; color:#e5f2ff;" readonly value="${share}">
+          <button class="btn" id="copyBtn">Copiar</button>
+        </div>
+
+        <table class="table">
+          <thead><tr><th>Ítem</th><th>Puntaje</th><th>Feedback</th></tr></thead>
+          <tbody>
+            ${data.scores.map(s => `
+              <tr>
+                <td>${escapeHtml(String(s.itemId))}</td>
+                <td>${s.score}/${s.max}</td>
+                <td class="muted">${escapeHtml(s.feedback || "")}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
       `;
+
+      document.getElementById('copyBtn').addEventListener('click', ()=>{
+        const el = document.getElementById('shareLink');
+        el.select(); el.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        alert('Enlace copiado.');
+      });
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
   </script>
 </body>
