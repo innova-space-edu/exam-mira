@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const BACKEND = "https://TU-SITIO.netlify.app/.netlify/functions";
+  const BACKEND = "https://exammira.netlify.app/.netlify/functions";
 
   const form = document.getElementById('examForm');
   const chatForm = document.getElementById('chatForm');
