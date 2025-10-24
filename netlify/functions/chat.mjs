@@ -1,42 +1,36 @@
+// netlify/functions/chat.mjs
 export async function handler(event) {
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers: cors(), body: "" };
-  }
+  if (event.httpMethod === "OPTIONS") return ok({});
+  if (event.httpMethod !== "POST") return err(405, "Method not allowed");
 
   try {
-    const { messages, system } = JSON.parse(event.body || "{}");
+    const { system, messages } = JSON.parse(event.body || "{}");
 
     const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://innova-space-edu.github.io/exam-mira/",
+        "HTTP-Referer": "https://exammira.netlify.app/",
         "X-Title": "Innova Space Education 2025"
       },
       body: JSON.stringify({
         model: "openai/gpt-4o-mini",
-        messages,
         temperature: 0.2,
-        max_tokens: 600,
-        ...(system ? { system } : {})
+        messages: [
+          { role: "system", content: system || "Eres un asistente docente." },
+          ...(Array.isArray(messages) ? messages : [])
+        ]
       })
     });
 
     const data = await r.json();
-    return json(200, data);
+    return ok(data);
   } catch (e) {
-    return json(500, { error: String(e) });
+    return err(500, String(e));
   }
 }
 
-function cors() {
-  return {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS"
-  };
-}
-function json(code, obj) {
-  return { statusCode: code, headers: cors(), body: JSON.stringify(obj) };
-}
+function cors() { return { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Content-Type, Authorization", "Access-Control-Allow-Methods": "GET, POST, OPTIONS" }; }
+function ok(obj){ return { statusCode: 200, headers: cors(), body: JSON.stringify(obj) }; }
+function err(code, msg){ return { statusCode: code, headers: cors(), body: JSON.stringify({ error: msg }) }; }
