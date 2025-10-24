@@ -30,6 +30,22 @@
         <button type="submit">Ingresar</button>
       </form>
       <p class="error" id="loginError"></p>
+
+      <!-- NUEVO: Acciones adicionales -->
+      <div class="login-actions" style="margin-top:12px; text-align:center;">
+        <!-- Registro abierto solo para @colprovidencia.cl -->
+        <p style="margin:6px 0;">
+          ¿No tienes cuenta?
+          <a href="/signup.html">Regístrate aquí</a>
+          <br />
+          <small style="opacity:.8;">Solo correos <strong>@colprovidencia.cl</strong></small>
+        </p>
+        <!-- Preparado para futura recuperación de contraseña desde login.js -->
+        <p style="margin:6px 0;">
+          ¿Olvidaste tu contraseña?
+          <a href="#" id="recoverLink" title="Recuperar contraseña (requiere activarlo en login.js)">Recupérala aquí</a>
+        </p>
+      </div>
     </div>
     <footer>
       <p>Innova Space Education 2025</p>
