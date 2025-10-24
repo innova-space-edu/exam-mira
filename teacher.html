@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Docentes — Innova Space Education 2025</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Widget de Netlify Identity -->
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <style>
     .container { max-width: 1100px; margin: 24px auto; padding: 0 16px;}
     .card { background: #121a26; border-radius: 18px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
@@ -16,35 +14,29 @@
     .btn.secondary { background:#263544; color:#c9d7e8; }
     .hidden { display:none; }
     .chatBox { height: 360px; overflow:auto; padding: 12px; background:#0e1622; border-radius:12px; }
-    .line { margin:8px 0; }
+    .line { margin:8px 0; white-space: pre-wrap; }
     .me { color:#9ce0ff; }
-    .bot { color:#b6f7e2; white-space: pre-wrap; }
+    .bot { color:#b6f7e2; }
     .field { display:flex; gap:8px; }
     input, textarea { width:100%; background:#0f1722; color:#e5f2ff; border:1px solid #1f2a3a; border-radius:10px; padding:10px; }
     label { color:#9db3cd; font-size:14px; }
+    header a { color:#9db3cd; text-decoration:none; }
   </style>
 </head>
 <body>
   <div class="container">
     <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <h1 style="color:#00d1d1;">Panel de Docentes</h1>
-      <div>
-        <button id="loginBtn" class="btn">Iniciar sesión</button>
-        <button id="logoutBtn" class="btn secondary hidden">Cerrar sesión</button>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <a href="/" class="btn secondary">Volver al examen</a>
+        <button id="logoutBtn" class="btn secondary">Cerrar sesión</button>
       </div>
     </header>
 
-    <!-- Bloque de acceso -->
-    <section id="gate" class="card">
-      <p>Para acceder al panel, por favor <strong>inicia sesión con tu correo</strong>.</p>
-      <p>Si no tienes invitación, pídele al admin que te envíe una invitación desde Netlify Identity.</p>
-      <button id="openWidget" class="btn">Entrar con correo</button>
-    </section>
-
-    <!-- Panel del docente -->
-    <main id="app" class="hidden">
+    <!-- Panel del docente (protegido por login) -->
+    <main id="app">
       <div class="row">
-        <!-- Constructor sencillo de examen -->
+        <!-- Constructor de examen -->
         <section class="card">
           <h2 style="color:#bce5ff;">Crear/editar examen</h2>
           <form id="examForm">
