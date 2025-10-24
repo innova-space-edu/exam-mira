@@ -1,0 +1,12 @@
+[build]
+publish = "innova-space-education"
+functions = "netlify/functions"
+command = ""
+
+
+[[headers]]
+for = "/.netlify/functions/*"
+[headers.values]
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Headers = "Content-Type, Authorization"
+Access-Control-Allow-Methods = "GET, POST, OPTIONS"
